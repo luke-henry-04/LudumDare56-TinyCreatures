@@ -4,44 +4,44 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
-    public DNA dna;
 
-    CircleCollider2D col;
+    public float anger = 0.1f;
+   
     MeshRenderer MR;
+    MeshFilter MF;
     Mesh mesh;
-    List<Vector3> verts;
-    List<int> tris;
+    Vector3[] verts;
+    int[] tris;
 
     // Start is called before the first frame update
     void Start()
     {
-        col = gameObject.AddComponent<CircleCollider2D>();
-        MR = gameObject.AddComponent<MeshRenderer>();
-        verts = new List<Vector3>();
-        tris = new List<int>();
-
         
-
+        MR = gameObject.GetComponent<MeshRenderer>();
+        MF = gameObject.GetComponent<MeshFilter>();
+        mesh = MF.mesh;
+        verts = mesh.vertices;
+        tris = mesh.triangles;
 
 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        verts = mesh.vertices;
         
-    }
-}
 
-public class DNA
-{
-    public Color color;
-    public float radius;
-    public int something;
-    public DNA(Color c_)
-    {
-        color = c_;
+        for (int i = 0; i < verts.Length; i++)
+        {
+            verts[i] = (verts[i]).normalized * (((Mathf.PerlinNoise(((float)i) / ((float)verts.Length), Time.time) + 0.5f)) / 2f + Random.Range(-anger, anger)) * transform.localScale.x;
 
+        }
+
+
+        mesh.SetVertices(verts);
+        MF.mesh = mesh;
     }
 
 }
+
+
