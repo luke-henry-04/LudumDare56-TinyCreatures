@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private Camera cam;
     public float sensitivity;
+    public float viewDegrees = 45;
     public float speed;
     public Transform[] bounds;
     // Start is called before the first frame update
@@ -21,7 +22,17 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        cam.transform.RotateAround(cam.transform.position, gameObject.transform.right, -Input.GetAxis("Mouse Y")*sensitivity*Time.deltaTime);
+        //cam.transform.RotateAround(cam.transform.position, gameObject.transform.right, );
+        cam.transform.localEulerAngles = new Vector3(cam.transform.localEulerAngles.x - Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime, 0, 0);
+
+        cam.transform.localRotation = Quaternion.Euler(
+            cam.transform.localEulerAngles.x<=180?
+                Mathf.Clamp(cam.transform.localEulerAngles.x,0, viewDegrees) :
+                Mathf.Clamp(cam.transform.localEulerAngles.x,360- viewDegrees, 360),
+            0,
+            0
+        );
+
         transform.RotateAround(cam.transform.position, Vector3.up, Input.GetAxis("Mouse X")*sensitivity*Time.deltaTime);
 
         transform.position += speed *(transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal"))* Time.deltaTime;

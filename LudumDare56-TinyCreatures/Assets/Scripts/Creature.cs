@@ -6,7 +6,8 @@ public class Creature : MonoBehaviour
 {
 
     public float anger = 0.1f;
-   
+    public float speed;
+    Rigidbody RB;
     MeshRenderer MR;
     MeshFilter MF;
     Mesh mesh;
@@ -16,7 +17,7 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        RB = gameObject.GetComponent<Rigidbody>();
         MR = gameObject.GetComponent<MeshRenderer>();
         MF = gameObject.GetComponent<MeshFilter>();
         mesh = MF.mesh;
@@ -40,6 +41,12 @@ public class Creature : MonoBehaviour
 
         mesh.SetVertices(verts);
         MF.mesh = mesh;
+    }
+
+    private void FixedUpdate()
+    {
+        RB.MovePosition(RB.position - transform.forward*speed);
+        RB.MoveRotation(transform.rotation * Quaternion.Euler(new Vector3(0, 10*(2*Mathf.PerlinNoise(Time.time, 0.5f)-1))));
     }
 
 }
