@@ -10,8 +10,10 @@ public class Drawer : MonoBehaviour
     public AnimationClip[] OpenCloseAnims;
     private bool open = false;
   
+    
     private void OnMouseDown()
     {
+        camera = Camera.main;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)){
