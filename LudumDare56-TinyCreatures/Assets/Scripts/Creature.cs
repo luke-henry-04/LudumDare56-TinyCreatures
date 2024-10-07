@@ -97,6 +97,7 @@ public class Creature : MonoBehaviour
             {
                 if (hit.rigidbody == RB)
                 {
+                    player.AS.Play();
                     player.holding = true;
                     held = true;
                     transform.SetParent(cam.transform);

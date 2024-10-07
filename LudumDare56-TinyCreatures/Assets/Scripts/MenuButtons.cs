@@ -21,16 +21,28 @@ public class MenuButtons : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         Time.timeScale = 1;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     public void Pause()
     {
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
-    public void Play(string name)
+    public void Play(int data)
     {
-        SceneManager.LoadScene(name);
+        int sceneNumber = data % 10;
+        bool lockCursor = false;
+        if (data >= 10)
+        {
+            lockCursor = true;
+        }
+        Cursor.visible = !lockCursor;
+        Cursor.lockState = lockCursor?CursorLockMode.Locked:CursorLockMode.None;
+        SceneManager.LoadScene(sceneNumber);
     }
 
     public void Quit()

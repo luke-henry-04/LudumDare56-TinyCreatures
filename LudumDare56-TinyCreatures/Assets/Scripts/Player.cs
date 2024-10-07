@@ -15,11 +15,13 @@ public class Player : MonoBehaviour
     public Collider waterRefilCol;
     public GameObject waterDiskPrefab;
 
+    public AudioSource AS;
     GameObject heldFoodDisk;
     GameObject heldWaterDisk;
     // Start is called before the first frame update
     void Start()
     {
+        AS = gameObject.GetComponent<AudioSource>();
         cam = Camera.main;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -64,11 +66,13 @@ public class Player : MonoBehaviour
             {
                 if (hit.collider == foodRefilCol && !holding)
                 {
+                    AS.Play();
                     holding = true;
                     heldFoodDisk = GameObject.Instantiate(foodDiskPrefab,cam.transform);
                     heldFoodDisk.transform.localPosition = new Vector3(0, 0, 5);
                 }else if(hit.collider.CompareTag("Food") && holding && heldFoodDisk != null)
                 {
+                    AS.Play();
                     holding = false;
                     hit.collider.GetComponent<Food>().foodLevel = 100;
                     hit.collider.GetComponent<Food>().UpdateFoodLevel();
@@ -76,12 +80,14 @@ public class Player : MonoBehaviour
                     heldFoodDisk = null;
                 }else if (hit.collider == waterRefilCol && !holding)
                 {
+                    AS.Play();
                     holding = true;
                     heldWaterDisk = GameObject.Instantiate(waterDiskPrefab, cam.transform);
                     heldWaterDisk.transform.localPosition = new Vector3(0, 0, 5);
                 }
                 else if (hit.collider.CompareTag("Water") && holding && heldWaterDisk != null)
                 {
+                    AS.Play();
                     holding = false;
                     hit.collider.GetComponent<Water>().waterLevel = 100;
                     hit.collider.GetComponent<Water>().UpdateWaterLevel();

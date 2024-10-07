@@ -56,6 +56,7 @@ public class Drawer : MonoBehaviour
                 Creature heldCreature = cam.gameObject.GetComponentInChildren<Creature>();
                 if (heldCreature != null)
                 {
+                    player.AS.Play();
                     heldCreature.gameObject.transform.SetParent(transform.parent);
                     heldCreature.held = false;
                     heldCreature.RB.isKinematic = false;

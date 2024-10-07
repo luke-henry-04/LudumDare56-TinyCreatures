@@ -27,10 +27,13 @@ public class Clock : MonoBehaviour
     public Transform[] spawners;
     public Material[] creatureMaterials;
     public GameObject creaturePrefab;
+    AudioSource AS;
+    bool sfxPlayed = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        AS = gameObject.GetComponent<AudioSource>();
          AM = boss.GetComponent<Animator>();
     }
 
@@ -43,14 +46,16 @@ public class Clock : MonoBehaviour
             arm.localRotation = Quaternion.Euler(new Vector3(arm.localEulerAngles.x, Mathf.Lerp(0, 360, timer / bossInterval) - 90, arm.localEulerAngles.z));
             if (timer >= bossInterval)
             {
-
+                if(!sfxPlayed)AS.Play();
                 BossCheck();
 
             }
             if (timer - bossInterval > bossDuration)
             {
-                Spawn();
+                Spawn(1.1f);
+                Spawn(0.5f);
                 timer = 0;
+                sfxPlayed = false;
                 AM.SetBool("Check", false);
             }
         }
@@ -60,6 +65,8 @@ public class Clock : MonoBehaviour
             LostPanel.color = Color.Lerp(new Color(0,0,0,0), Color.black, lossTimer / timeAfterLoss);
             if (lossTimer > timeAfterLoss)
             {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
                 SceneManager.LoadScene("Game Over");
             }
         }
@@ -67,9 +74,9 @@ public class Clock : MonoBehaviour
        
     }
 
-    void Spawn()
+    void Spawn(float prob)
     {
-        if (Random.Range(0f, 1f) < 0.5f)
+        if (Random.Range(0f, 1f) < prob)
         {
             int ind = Random.Range(0, spawners.Length);
             GameObject child = GameObject.Instantiate(creaturePrefab, spawners[ind].parent);
@@ -84,6 +91,7 @@ public class Clock : MonoBehaviour
     void BossCheck()
     {
         //BOSS CHECK CODE
+        sfxPlayed = true;
         AM.SetBool("Check", true);
 
         if(AM.GetCurrentAnimatorStateInfo(0).IsName("Checking"))
@@ -130,6 +138,7 @@ public class Clock : MonoBehaviour
             AM.SetBool("Lost", true);
             lossTimer += 0.1f;
             lights[j].color = Color.red;
+            
         }
     }
 

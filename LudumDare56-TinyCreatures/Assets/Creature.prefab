@@ -643,8 +643,8 @@ MonoBehaviour:
   - Food
   - Water
   maxNeeds:
-  - 5
-  - 5
+  - 50
+  - 50
   needSprites:
   - {fileID: 21300000, guid: b19cc4abc7c105544a973e3f9d5681b3, type: 3}
   - {fileID: 21300000, guid: 7afb5164f2a2c9e47963274aa0cedfd2, type: 3}
