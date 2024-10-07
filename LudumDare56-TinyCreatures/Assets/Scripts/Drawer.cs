@@ -9,7 +9,7 @@ public class Drawer : MonoBehaviour
     Player player;
     public Animator animator;
     public AnimationClip[] OpenCloseAnims;
-    private bool open = false;
+    public bool open = false;
     bool dropping = false;
 
 

@@ -2,18 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.UI;
+
 public class Creature : MonoBehaviour
 {
     public DrawerBounds drawer;
+    public GameObject canvas;
+    public Image image;
+
     public float anger = 0.1f;
     public float angerRate;
     public float angerMax;
-    public float speed;
-    public float[] maxNeeds;
-    float[] needs;
-    public bool held = false;
 
+    public float speed;
+
+    public string[] needTags;
+    public float[] maxNeeds;
+    public Sprite[] needSprites;
+    float[] needs;
+   
+
+    public bool held = false;
+    
     Player player;
+    
     
     Camera cam;
     public Rigidbody RB;
@@ -26,6 +38,7 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canvas.SetActive(false);
         cam = Camera.main;
 
         needs = new float[maxNeeds.Length];
@@ -62,9 +75,14 @@ public class Creature : MonoBehaviour
 
         UpdateNeeds();
         if(!held && !player.holding)PickUpCheck();
+        if (canvas.activeSelf) RotateUI();
         
     }
+    void RotateUI()
+    {
+        canvas.transform.LookAt(cam.transform.position);
 
+    }
     void PickUpCheck()
     {
         if (Input.GetMouseButtonDown(1))
@@ -94,8 +112,28 @@ public class Creature : MonoBehaviour
             needs[i] -= Time.deltaTime;
             if (needs[i] < 0)
             {
+                if (!canvas.activeSelf)
+                {
+                    canvas.SetActive(true);
+                    image.sprite = needSprites[i];
+                }
+
                 anger += Time.deltaTime * angerRate;
                 anger = Mathf.Clamp(anger, 0, angerMax);
+            }
+        }
+
+        if (anger >= angerMax - 0.01f && !held)
+        {
+            Drawer d = drawer.GetComponentInChildren<Drawer>();
+            if (!d.animator.GetBool("Open"))
+            {
+                AnimatorStateInfo ASI = d.animator.GetCurrentAnimatorStateInfo(0);
+                if ((ASI.IsName("TopDrawerIn") ||  ASI.IsName("BottomDrawerIn")) &&   ASI.normalizedTime >= 0.75)
+                {
+                    d.open = true;
+                    d.animator.SetBool("Open", true);
+                }
             }
         }
 
@@ -114,6 +152,27 @@ public class Creature : MonoBehaviour
         }
         transform.localEulerAngles = new Vector3(0, 20 * (2 * Mathf.PerlinNoise(Time.time, (float)gameObject.GetInstanceID()) - 1) + transform.localEulerAngles.y,0);
 
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (!held && canvas.activeSelf)
+        {
+            for (int i = 0; i < needs.Length; i++) {
+                if (other.CompareTag(needTags[i]))
+                {
+                    if (image.sprite == needSprites[i])
+                    {
+                        canvas.SetActive(false);
+                        needs[i] = maxNeeds[i];
+                        anger = 0.05f;
+                        break;
+                    }
+                }
+            }
+            
+            
+        }
     }
 
 }
