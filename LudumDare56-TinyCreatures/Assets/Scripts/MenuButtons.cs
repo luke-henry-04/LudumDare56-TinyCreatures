@@ -5,7 +5,12 @@ using UnityEngine.SceneManagement;
 public class MenuButtons : MonoBehaviour
 {
     public GameObject pauseMenu;
+    AudioSource AS;
 
+    private void Start()
+    {
+        AS = gameObject.GetComponent<AudioSource>();
+    }
     private void Update()
     {
         if (pauseMenu != null)
@@ -19,13 +24,15 @@ public class MenuButtons : MonoBehaviour
 
     public void UnPause()
     {
-        pauseMenu.SetActive(false);
+        AS.Play();
+        if(pauseMenu)pauseMenu.SetActive(false);
         Time.timeScale = 1;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
     public void Pause()
     {
+        AS.Play();
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
         Cursor.visible = true;
@@ -34,6 +41,7 @@ public class MenuButtons : MonoBehaviour
 
     public void Play(int data)
     {
+        UnPause();
         int sceneNumber = data % 10;
         bool lockCursor = false;
         if (data >= 10)
@@ -47,6 +55,7 @@ public class MenuButtons : MonoBehaviour
 
     public void Quit()
     {
+        AS.Play();
         Application.Quit();
     }
 
