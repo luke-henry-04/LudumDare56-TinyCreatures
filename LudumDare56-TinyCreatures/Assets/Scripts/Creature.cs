@@ -166,7 +166,7 @@ public class Creature : MonoBehaviour
                         Food f = other.GetComponent<Food>();
                         if (f!=null)
                         {
-                            if (f.foodLevel >= 0)
+                            if (f.foodLevel > 0)
                             {
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
@@ -177,19 +177,19 @@ public class Creature : MonoBehaviour
                             }
                         }
 
-                        /*Water w = other.GetComponent<Water>();
+                        Water w = other.GetComponent<Water>();
                         if (w != null)
                         {
-                            if (w.waterlevel >= 0)
+                            if (w.waterLevel > 0)
                             {
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
                                 anger = 0.05f;
-                                w.waterlevel -= 20;
+                                w.waterLevel -= 20;
                                 w.UpdateWaterLevel();
                                 break;
                             }
-                        }*/
+                        }
 
                     }
                 }
