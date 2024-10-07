@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Clock : MonoBehaviour
 {
@@ -10,6 +12,9 @@ public class Clock : MonoBehaviour
     Animator AM;
     public GameObject boss;
     public float bossDuration = 5;
+    public float timeAfterLoss = 5;
+    float lossTimer = 0;
+    public Image LostPanel;
 
 
     public Drawer[] drawers;
@@ -32,19 +37,31 @@ public class Clock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
-        arm.localRotation=Quaternion.Euler(new Vector3(arm.localEulerAngles.x, Mathf.Lerp(0,360,timer/bossInterval)-90, arm.localEulerAngles.z));
-        if (timer >= bossInterval)
+        if (lossTimer < 0.05f)
         {
-            
-            BossCheck();
+            timer += Time.deltaTime;
+            arm.localRotation = Quaternion.Euler(new Vector3(arm.localEulerAngles.x, Mathf.Lerp(0, 360, timer / bossInterval) - 90, arm.localEulerAngles.z));
+            if (timer >= bossInterval)
+            {
 
+                BossCheck();
+
+            }
+            if (timer - bossInterval > bossDuration)
+            {
+                Spawn();
+                timer = 0;
+                AM.SetBool("Check", false);
+            }
         }
-        if (timer - bossInterval > bossDuration)
+        else
         {
-            Spawn();
-            timer = 0;
-            AM.SetBool("Check", false);
+            lossTimer += Time.deltaTime;
+            LostPanel.color = Color.Lerp(new Color(0,0,0,0), Color.black, lossTimer / timeAfterLoss);
+            if (lossTimer > timeAfterLoss)
+            {
+                SceneManager.LoadScene("Game Over");
+            }
         }
 
        
@@ -110,6 +127,8 @@ public class Clock : MonoBehaviour
     {
         for (int j = 0; j < lights.Length; j++)
         {
+            AM.SetBool("Lost", true);
+            lossTimer += 0.1f;
             lights[j].color = Color.red;
         }
     }
