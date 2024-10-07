@@ -6,8 +6,17 @@ public class Creature : MonoBehaviour
 {
     public DrawerBounds drawer;
     public float anger = 0.1f;
+    public float angerRate;
+    public float angerMax;
     public float speed;
-    Rigidbody RB;
+    public float[] maxNeeds;
+    float[] needs;
+    public bool held = false;
+
+    Player player;
+    
+    Camera cam;
+    public Rigidbody RB;
     MeshRenderer MR;
     MeshFilter MF;
     Mesh mesh;
@@ -17,6 +26,12 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        cam = Camera.main;
+
+        needs = new float[maxNeeds.Length];
+        for(int i = 0; i<needs.Length; i++) needs[i] = Random.Range(0f, 1f) * maxNeeds[i];
+
+        player = cam.transform.parent.gameObject.GetComponent<Player>();
         drawer = gameObject.GetComponentInParent<DrawerBounds>();
         RB = gameObject.GetComponent<Rigidbody>();
         MR = gameObject.GetComponent<MeshRenderer>();
@@ -31,28 +46,74 @@ public class Creature : MonoBehaviour
     private void Update()
     {
         verts = mesh.vertices;
-        
-
         for (int i = 0; i < verts.Length; i++)
         {
-            verts[i] = (verts[i]).normalized * (((Mathf.PerlinNoise(((float)i) / ((float)verts.Length), Time.time) + 0.5f)) / 2f + Random.Range(-anger, anger)) * transform.localScale.x;
-
+            verts[i] =
+                transform.localScale.x *
+                (
+                    verts[i]).normalized 
+                    *((Mathf.PerlinNoise(((float)i) / ((float)verts.Length), Time.time)+ 0.5f) 
+                    / 2f 
+                    + Random.Range(-anger, anger)
+                );
         }
-
-
         mesh.SetVertices(verts);
         MF.mesh = mesh;
+
+        UpdateNeeds();
+        if(!held && !player.holding)PickUpCheck();
+        
+    }
+
+    void PickUpCheck()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.rigidbody == RB)
+                {
+                    player.holding = true;
+                    held = true;
+                    transform.SetParent(cam.transform);
+                    RB.isKinematic = true;
+                    gameObject.GetComponent<Collider>().enabled = false;
+                    transform.localPosition = new Vector3(0, 0, 5);
+                }
+                
+            }
+        }
+
+    }
+    void UpdateNeeds()
+    {
+        for(int i = 0; i<needs.Length; i++)
+        {
+            needs[i] -= Time.deltaTime;
+            if (needs[i] < 0)
+            {
+                anger += Time.deltaTime * angerRate;
+                anger = Mathf.Clamp(anger, 0, angerMax);
+            }
+        }
+
     }
 
     private void FixedUpdate()
     {
-        RB.MovePosition(RB.position - transform.forward*speed);
-        RB.MoveRotation(transform.rotation * Quaternion.Euler(new Vector3(0, 10*(2*Mathf.PerlinNoise(Time.time, 0.5f)-1))));
-        RB.position = new Vector3(
-            Mathf.Clamp(RB.position.x, drawer.bounds[0].position.x, drawer.bounds[1].position.x),
-            Mathf.Clamp(RB.position.y, drawer.bounds[1].position.y, drawer.bounds[0].position.y),
-            Mathf.Clamp(RB.position.z, drawer.bounds[0].position.z, drawer.bounds[1].position.z)
-        ) ;
+        if (!held)
+        {
+            RB.MovePosition(RB.position - transform.forward * speed);
+            RB.position = new Vector3(
+                Mathf.Clamp(RB.position.x, drawer.bounds[0].position.x, drawer.bounds[1].position.x),
+                Mathf.Clamp(RB.position.y, drawer.bounds[1].position.y, drawer.bounds[0].position.y),
+                Mathf.Clamp(RB.position.z, drawer.bounds[0].position.z, drawer.bounds[1].position.z)
+            );
+        }
+        transform.localEulerAngles = new Vector3(0, 20 * (2 * Mathf.PerlinNoise(Time.time, (float)gameObject.GetInstanceID()) - 1) + transform.localEulerAngles.y,0);
+
     }
 
 }

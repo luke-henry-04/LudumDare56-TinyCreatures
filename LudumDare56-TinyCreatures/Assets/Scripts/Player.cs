@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public bool holding = false;
     private Camera cam;
     public float sensitivity;
     public float viewDegrees = 45;
