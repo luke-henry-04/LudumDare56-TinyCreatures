@@ -58,7 +58,7 @@ public class Player : MonoBehaviour
 
     void CheckPickUps()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

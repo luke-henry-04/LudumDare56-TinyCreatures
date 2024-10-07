@@ -26,8 +26,8 @@ public class Creature : MonoBehaviour
     public bool held = false;
     
     Player player;
-    
-    
+
+    AudioSource AS;
     Camera cam;
     public Rigidbody RB;
     MeshRenderer MR;
@@ -39,6 +39,7 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        AS = gameObject.GetComponent<AudioSource>();
 
         color = gameObject.GetComponent<MeshRenderer>().material;
 
@@ -130,7 +131,10 @@ public class Creature : MonoBehaviour
 
         if (anger >= angerMax - 0.01f && !held)
         {
-            
+            if (!AS.isPlaying)
+            {
+                AS.Play();
+            }
             gameObject.GetComponent<MeshRenderer>().material = angry;
             Drawer d = drawer.GetComponentInChildren<Drawer>();
             if (!d.animator.GetBool("Open"))
@@ -175,7 +179,7 @@ public class Creature : MonoBehaviour
                         {
                             if (f.foodLevel > 0)
                             {
-
+                                AS.Stop();
                                 gameObject.GetComponent<MeshRenderer>().material = color;
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
@@ -191,6 +195,7 @@ public class Creature : MonoBehaviour
                         {
                             if (w.waterLevel > 0)
                             {
+                                AS.Stop();
                                 gameObject.GetComponent<MeshRenderer>().material = color;
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
