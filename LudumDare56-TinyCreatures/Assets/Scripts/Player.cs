@@ -10,6 +10,10 @@ public class Player : MonoBehaviour
     public float viewDegrees = 45;
     public float speed;
     public Transform[] bounds;
+    public Collider foodRefilCol;
+    public GameObject foodDiskPrefab;
+
+    GameObject heldFoodDisk;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,5 +47,33 @@ public class Player : MonoBehaviour
             Mathf.Clamp(transform.position.z, bounds[0].position.z, bounds[1].position.z)
         );
 
+        CheckPickUps();
+
+    }
+
+    void CheckPickUps()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider == foodRefilCol && !holding)
+                {
+                    holding = true;
+                    heldFoodDisk = GameObject.Instantiate(foodDiskPrefab,cam.transform);
+                    heldFoodDisk.transform.localPosition = new Vector3(0, 0, 5);
+                }else if(hit.collider.CompareTag("Food") && holding && heldFoodDisk != null)
+                {
+                    holding = false;
+                    hit.collider.GetComponent<Food>().foodLevel = 100;
+                    hit.collider.GetComponent<Food>().UpdateFoodLevel();
+                    GameObject.Destroy(heldFoodDisk);
+                    heldFoodDisk = null;
+                }
+
+            }
+        }
     }
 }

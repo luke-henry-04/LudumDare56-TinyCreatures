@@ -163,10 +163,34 @@ public class Creature : MonoBehaviour
                 {
                     if (image.sprite == needSprites[i])
                     {
-                        canvas.SetActive(false);
-                        needs[i] = maxNeeds[i];
-                        anger = 0.05f;
-                        break;
+                        Food f = other.GetComponent<Food>();
+                        if (f!=null)
+                        {
+                            if (f.foodLevel >= 0)
+                            {
+                                canvas.SetActive(false);
+                                needs[i] = maxNeeds[i];
+                                anger = 0.05f;
+                                f.foodLevel -= 20;
+                                f.UpdateFoodLevel();
+                                break;
+                            }
+                        }
+
+                        /*Water w = other.GetComponent<Water>();
+                        if (w != null)
+                        {
+                            if (w.waterlevel >= 0)
+                            {
+                                canvas.SetActive(false);
+                                needs[i] = maxNeeds[i];
+                                anger = 0.05f;
+                                w.waterlevel -= 20;
+                                w.UpdateWaterLevel();
+                                break;
+                            }
+                        }*/
+
                     }
                 }
             }

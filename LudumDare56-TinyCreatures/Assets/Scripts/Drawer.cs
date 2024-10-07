@@ -54,17 +54,19 @@ public class Drawer : MonoBehaviour
             {
                 
                 Creature heldCreature = cam.gameObject.GetComponentInChildren<Creature>();
-               
-                heldCreature.gameObject.transform.SetParent(transform.parent);
-                heldCreature.held = false;
-                heldCreature.RB.isKinematic = false;
-                dropping = true;
-               
-                heldCreature.gameObject.GetComponent<Collider>().enabled = true;
-                heldCreature.transform.localPosition = new Vector3(8.783f, 2.36f, 2.12f);
+                if (heldCreature != null)
+                {
+                    heldCreature.gameObject.transform.SetParent(transform.parent);
+                    heldCreature.held = false;
+                    heldCreature.RB.isKinematic = false;
+                    dropping = true;
 
-                heldCreature.drawer = transform.parent.parent.GetComponent<DrawerBounds>();
-                heldCreature.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    heldCreature.gameObject.GetComponent<Collider>().enabled = true;
+                    heldCreature.transform.localPosition = new Vector3(8.783f, 2.36f, 2.12f);
+
+                    heldCreature.drawer = transform.parent.parent.GetComponent<DrawerBounds>();
+                    heldCreature.transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
 
             }
 
