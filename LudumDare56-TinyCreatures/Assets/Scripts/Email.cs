@@ -11,7 +11,7 @@ public class Email : MonoBehaviour
     public Color endColor;
     public Color blinkColor;
     float timer = 0;
-    float blinkTimer = 0;
+    public float blinkTimer = 0;
     float blinkRate = 0.5f;
     
     

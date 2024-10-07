@@ -11,7 +11,7 @@ public class Drawer : MonoBehaviour
     public AnimationClip[] OpenCloseAnims;
     public bool open = false;
     bool dropping = false;
-
+    public Light spotlight;
 
     private void Start()
     {

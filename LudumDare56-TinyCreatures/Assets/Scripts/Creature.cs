@@ -20,7 +20,8 @@ public class Creature : MonoBehaviour
     public float[] maxNeeds;
     public Sprite[] needSprites;
     float[] needs;
-   
+    public Material angry;
+    Material color;
 
     public bool held = false;
     
@@ -38,6 +39,9 @@ public class Creature : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        color = gameObject.GetComponent<MeshRenderer>().material;
+
         canvas.SetActive(false);
         cam = Camera.main;
 
@@ -125,11 +129,13 @@ public class Creature : MonoBehaviour
 
         if (anger >= angerMax - 0.01f && !held)
         {
+            
+            gameObject.GetComponent<MeshRenderer>().material = angry;
             Drawer d = drawer.GetComponentInChildren<Drawer>();
             if (!d.animator.GetBool("Open"))
             {
                 AnimatorStateInfo ASI = d.animator.GetCurrentAnimatorStateInfo(0);
-                if ((ASI.IsName("TopDrawerIn") ||  ASI.IsName("BottomDrawerIn")) &&   ASI.normalizedTime >= 0.75)
+                if ((ASI.IsName("TopDrawerIn") ||  ASI.IsName("BottomDrawerIn") || ASI.IsName("New State")) &&   ASI.normalizedTime >= 0.75)
                 {
                     d.open = true;
                     d.animator.SetBool("Open", true);
@@ -168,6 +174,8 @@ public class Creature : MonoBehaviour
                         {
                             if (f.foodLevel > 0)
                             {
+
+                                gameObject.GetComponent<MeshRenderer>().material = color;
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
                                 anger = 0.05f;
@@ -182,6 +190,7 @@ public class Creature : MonoBehaviour
                         {
                             if (w.waterLevel > 0)
                             {
+                                gameObject.GetComponent<MeshRenderer>().material = color;
                                 canvas.SetActive(false);
                                 needs[i] = maxNeeds[i];
                                 anger = 0.05f;
