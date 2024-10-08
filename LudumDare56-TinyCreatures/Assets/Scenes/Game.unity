@@ -13510,7 +13510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holding: 0
-  sensitivity: 258.22
+  sensitivity: 198.81
   viewDegrees: 80
   speed: 28.2
   bounds:
